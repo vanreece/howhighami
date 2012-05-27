@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="jquery-1.7.2.js"></script>
+    <script src="jquery.xdomainajax.js"></script>
+    <script>
+      jQuery(window).ready(function(){
+        initiate_geolocation();
+      });
+
+      function initiate_geolocation() {
+        navigator.geolocation.getCurrentPosition(handle_geolocation_query);
+      }
+
+      function handle_geolocation_query(position){
+        var url = "http://gisdata.usgs.net/xmlwebservices2/elevation_service.asmx/getElevation?X_Value=" + 
+                  position.coords.longitude +
+                  "&Y_Value=" +
+                  position.coords.latitude + 
+                  "&Elevation_Units=FEET&Source_Layer=NED.CONUS_NED_13W&Elevation_Only=0";
+
+        $("#latitude").text(position.coords.latitude);
+        $("#longitude").text(position.coords.longitude);
+
+        console.log(position);
+
+        $.ajax({
+          url: url,
+          success: function(xml){
+            var xmldoc = $.parseXML(xml.responseText);
+            var altitude = $(xmldoc).find("p").text()
+
+            $("#elevation").text(altitude)
+          },
+          error: function(){
+            alert("Error!");
+          },
+          type: "get",
+          datatype: "xml"
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="myDiv">
+      <p>
+        Latitude: <span id="latitude"></span><br>
+        Longitude: <span id="longitude"></span><br>
+        Elevation: <span id="elevation"></span>ft
+      <p>
+    </div>
+  </body>
+</html>
