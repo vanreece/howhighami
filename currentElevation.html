@@ -22,15 +22,13 @@
         $("#latitude").text(position.coords.latitude);
         $("#longitude").text(position.coords.longitude);
 
-        console.log(position);
-
         $.ajax({
           url: url,
           success: function(xml){
             var xmldoc = $.parseXML(xml.responseText);
             var altitude = $(xmldoc).find("p").text()
 
-            $("#elevation").text(altitude)
+            $("#elevation").text(Math.round(altitude))
           },
           error: function(){
             alert("Error!");
